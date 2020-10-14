@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as courseApi from "../../api/CoursesApi";
 import moment from "moment";
 

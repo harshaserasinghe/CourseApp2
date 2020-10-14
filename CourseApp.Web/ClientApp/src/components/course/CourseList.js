@@ -1,46 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import * as courseApi from "../../api/CoursesApi";
-import { Modal, Button } from "react-bootstrap";
+import CourseSearch from "./CourseSearch";
+import DeleteCourse from "./CourseDelete";
 
 const CourseList = () => {
 	const [courses, setCourses] = useState([]);
-	const [filter, setFilter] = useState("");
 	const [modalShow, setModelShow] = useState(false);
 	const [deleteId, setDeleteId] = useState(0);
 
-	useEffect(() => {
-		onSearchCourse();
-	}, []);
-
-	const onFilter = (event) => setFilter(event.target.value);
-
-	const onSearchCourse = async () => {
-		try {
-			const _courses = await courseApi.getCourses(filter);
-			setCourses(_courses);
-		} catch (error) {
-			console.error(error);
-		}
+	const handleGet = (_courses) => {
+		setCourses(_courses);
 	};
 
-	const onDeleteCourse = async (event) => {
-		const id = parseInt(deleteId);
-		try {
-			await courseApi.courseDelete(id);
-			setCourses(courses.filter((c) => c.id !== id));
-			setDeleteId(0);
-			onModalClose();
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
-	const onModalClose = () => setModelShow(false);
-
-	const onModalShow = (event) => {
+	const handleDelete = (event) => {
 		setDeleteId(event.target.value);
 		setModelShow(true);
+	};
+
+	const handleDeleteSuccess = async () => {
+		await setCourses(courses.filter((c) => c.id !== parseInt(deleteId)));
+		setDeleteId(0);
+		setModelShow(false);
+	};
+
+	const handleModalClose = () => {
+		setDeleteId(0);
+		setModelShow(false);
 	};
 
 	return (
@@ -48,22 +33,7 @@ const CourseList = () => {
 			<div className="card">
 				<div className="card-body">
 					<div className="row search-row">
-						<div className="col-md-2">
-							<input
-								type="text"
-								name="filter"
-								onChange={onFilter}
-								value={filter}
-							></input>
-						</div>
-						<div className="col-md-2">
-							<button
-								className="btn btn-primary search-btn"
-								onClick={onModalShow}
-							>
-								Search
-							</button>
-						</div>
+						<CourseSearch onGet={handleGet} />
 						{courses.length > 0 && (
 							<div className="table-responsive">
 								<table className="table table-striped">
@@ -97,7 +67,7 @@ const CourseList = () => {
 														</Link>
 														<button
 															className="btn btn-warning delete-btn"
-															onClick={onModalShow}
+															onClick={handleDelete}
 															value={c.id}
 														>
 															Delete
@@ -113,25 +83,12 @@ const CourseList = () => {
 					</div>
 				</div>
 			</div>
-			<Modal
-				show={modalShow}
-				onHide={onModalClose}
-				backdrop="static"
-				keyboard={false}
-			>
-				<Modal.Header closeButton>
-					<Modal.Title>Delete confirm</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>Are you want to delete ?</Modal.Body>
-				<Modal.Footer>
-					<Button variant="primary" onClick={onDeleteCourse}>
-						Ok
-					</Button>
-					<Button variant="secondary" onClick={onModalClose}>
-						Cancel
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<DeleteCourse
+				modalShow={modalShow}
+				deleteId={deleteId}
+				onDeleteSuccess={handleDeleteSuccess}
+				onModalClose={handleModalClose}
+			/>
 		</>
 	);
 };

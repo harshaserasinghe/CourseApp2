@@ -98,8 +98,8 @@ namespace CourseApp.Web
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

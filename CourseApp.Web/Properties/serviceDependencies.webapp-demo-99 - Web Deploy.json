@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/webapp-demo/databases/CourseDb",
+      "type": "mssql.azure",
+      "connectionId": "CourseDb",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

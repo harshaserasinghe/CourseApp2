@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import * as courseApi from "../../api/CoursesApi";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 const CourseDetails = (props) => {
 	const id = props.match.params.id;
@@ -17,6 +18,7 @@ const CourseDetails = (props) => {
 			setCourse(_courses);
 		} catch (error) {
 			console.error(error);
+			toast.error("Course get failed");
 		}
 	};
 

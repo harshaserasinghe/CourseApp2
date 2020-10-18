@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import * as courseApi from "../../api/CoursesApi";
+import { toast } from "react-toastify";
 
 const CourseCreate = (props) => {
 	const [course, setCourse] = useState({
@@ -11,30 +12,31 @@ const CourseCreate = (props) => {
 		category: "",
 		author: "",
 		publishedDate: null,
-		errors: "",
 	});
 
 	const [errors, setErrors] = useState({});
 
-	const onChange = ({ target }) => {
+	const handleChange = ({ target }) => {
 		setCourse({ ...course, [target.name]: target.value });
+		setErrors({ ...errors, [target.name]: null });
 	};
 
-	const onCreatCourse = async () => {
+	const handleCreate = async () => {
 		try {
 			await courseApi.createCourse(course);
 			props.history.push("/");
+			toast.success("Course saved");
 		} catch (_errors) {
 			console.error(_errors);
-			setCourse(_errors);
+			toast.error("Course saved failed");
 		}
 	};
-	const onSubmit = (event) => {
+	const handleSubmit = (event) => {
 		event.preventDefault();
 
 		if (!formIsValid()) return;
 
-		onCreatCourse();
+		handleCreate();
 	};
 
 	const formIsValid = () => {
@@ -56,10 +58,7 @@ const CourseCreate = (props) => {
 
 	return (
 		<div className="col-md-4">
-			<form onSubmit={onSubmit}>
-				{course.errors && (
-					<div className="alert alert-danger">{course.errors}</div>
-				)}
+			<form onSubmit={handleSubmit}>
 				<div className="form-group">
 					<label htmlFor="name">Title</label>
 					<input
@@ -67,7 +66,7 @@ const CourseCreate = (props) => {
 						type="text"
 						name="name"
 						value={course.name}
-						onChange={onChange}
+						onChange={handleChange}
 						error={errors.name}
 						placeholder="Title"
 						className="form-control"
@@ -82,7 +81,7 @@ const CourseCreate = (props) => {
 						id="level"
 						name="level"
 						value={course.level || ""}
-						onChange={onChange}
+						onChange={handleChange}
 						className="form-control"
 					>
 						<option value="">Select skill level</option>
@@ -100,7 +99,7 @@ const CourseCreate = (props) => {
 						id="rating"
 						name="rating"
 						value={course.rating || ""}
-						onChange={onChange}
+						onChange={handleChange}
 						className="form-control"
 					>
 						<option value="">Select rating</option>
@@ -121,7 +120,7 @@ const CourseCreate = (props) => {
 						type="text"
 						name="category"
 						value={course.category}
-						onChange={onChange}
+						onChange={handleChange}
 						error={errors.name}
 						placeholder="Category"
 						className="form-control"
@@ -137,7 +136,7 @@ const CourseCreate = (props) => {
 						type="text"
 						name="author"
 						value={course.author}
-						onChange={onChange}
+						onChange={handleChange}
 						error={errors.author}
 						placeholder="Author"
 						className="form-control"

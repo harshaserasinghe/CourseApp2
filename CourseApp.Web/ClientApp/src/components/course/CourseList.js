@@ -2,30 +2,54 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import CourseSearch from "./CourseSearch";
 import DeleteCourse from "./CourseDelete";
+import UpdateCourse from "./CourseUpdate";
 
 const CourseList = () => {
 	const [courses, setCourses] = useState([]);
-	const [modalShow, setModelShow] = useState(false);
-	const [deleteId, setDeleteId] = useState(0);
+	const [updateModalShow, setUpdateModelShow] = useState(false);
+	const [deleteModalShow, setDeleteModelShow] = useState(false);
+	const [updateId, setUpdateId] = useState(null);
+	const [deleteId, setDeleteId] = useState(null);
 
 	const handleGet = (_courses) => {
 		setCourses(_courses);
 	};
 
+	const handleUpdate = (event) => {
+		setUpdateId(event.target.value);
+		setUpdateModelShow(true);
+	};
+
+	const handleUpdateSuccess = (_course) => {
+		setCourses(
+			courses.map((c) => {
+				if (c.id !== parseInt(_course.id)) return c;
+				else return _course;
+			})
+		);
+		setUpdateId(null);
+		setUpdateModelShow(false);
+	};
+
+	const handleUpdateModalClose = () => {
+		setUpdateId(null);
+		setUpdateModelShow(false);
+	};
+
 	const handleDelete = (event) => {
 		setDeleteId(event.target.value);
-		setModelShow(true);
+		setDeleteModelShow(true);
 	};
 
-	const handleDeleteSuccess = async () => {
-		await setCourses(courses.filter((c) => c.id !== parseInt(deleteId)));
-		setDeleteId(0);
-		setModelShow(false);
+	const handleDeleteSuccess = () => {
+		setCourses(courses.filter((c) => c.id !== parseInt(deleteId)));
+		setDeleteId(null);
+		setDeleteModelShow(false);
 	};
 
-	const handleModalClose = () => {
-		setDeleteId(0);
-		setModelShow(false);
+	const handleDeleteModalClose = () => {
+		setDeleteId(null);
+		setDeleteModelShow(false);
 	};
 
 	return (
@@ -41,7 +65,9 @@ const CourseList = () => {
 										<tr>
 											<th>Title</th>
 											<th>Skill Level</th>
-											<th>Rating</th>
+											<th>
+												Rating
+											</th>
 											<th>Path</th>
 											<th></th>
 										</tr>
@@ -59,12 +85,13 @@ const CourseList = () => {
 													<td>{`${c.rating}/5`}</td>
 													<td>{c.category}</td>
 													<td>
-														<Link
+														<button
 															className="btn btn-secondary"
-															to={"/course-update/" + c.id}
+															onClick={handleUpdate}
+															value={c.id}
 														>
-															Edit
-														</Link>
+															Update
+														</button>
 														<button
 															className="btn btn-warning delete-btn"
 															onClick={handleDelete}
@@ -84,10 +111,16 @@ const CourseList = () => {
 				</div>
 			</div>
 			<DeleteCourse
-				modalShow={modalShow}
+				deleteModalShow={deleteModalShow}
 				deleteId={deleteId}
 				onDeleteSuccess={handleDeleteSuccess}
-				onModalClose={handleModalClose}
+				onDeleteModalClose={handleDeleteModalClose}
+			/>
+			<UpdateCourse
+				updateModalShow={updateModalShow}
+				updateId={updateId}
+				onUpdateSuccess={handleUpdateSuccess}
+				onUpdateModalClose={handleUpdateModalClose}
 			/>
 		</>
 	);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import * as courseApi from "../../api/CoursesApi";
+import { toast } from "react-toastify";
 
 const CourseSearch = ({ onGet }) => {
 	const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +18,7 @@ const CourseSearch = ({ onGet }) => {
 			onGet(courses);
 		} catch (error) {
 			console.error(error);
+			toast.error("Courses get failed");
 		}
 	};
 

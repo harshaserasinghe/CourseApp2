@@ -63,6 +63,10 @@ export const courseDelete = async (id) => {
 };
 
 export const handleError = (error) => {
-	const _error = `Error has occurred \n status: ${error.response.data.status} \n message: ${error.response.data.title}`;
+	const _error = {
+		status: error.response.data.status,
+		message: error.response.data.title,
+		errors: error.response.data.errors,
+	};
 	throw _error;
 };

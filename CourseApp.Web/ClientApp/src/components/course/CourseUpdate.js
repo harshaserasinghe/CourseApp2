@@ -4,12 +4,7 @@ import { Modal } from "react-bootstrap";
 import * as courseApi from "../../api/CoursesApi";
 import { toast } from "react-toastify";
 
-const CourseUpdate = ({
-	updateModalShow,
-	updateId,
-	onUpdateSuccess,
-	onUpdateModalClose,
-}) => {
+const CourseUpdate = ({ modalShow, id, onSuccess, onModalClose }) => {
 	const [course, setCourse] = useState({
 		id: null,
 		name: "",
@@ -22,10 +17,10 @@ const CourseUpdate = ({
 	const [errors, setErrors] = useState({});
 
 	useEffect(() => {
-		if (updateId) handleSearch(updateId);
-	}, [updateId]);
+		if (id) handleSearch(id);
+	}, [id]);
 
-	const handleModalClose = () => onUpdateModalClose();
+	const handleModalClose = () => onModalClose();
 
 	const handleChange = ({ target }) => {
 		setCourse({ ...course, [target.name]: target.value });
@@ -45,7 +40,7 @@ const CourseUpdate = ({
 	const handleUpdate = async (id) => {
 		try {
 			await courseApi.courseUpdate(id, course);
-			onUpdateSuccess(course);
+			onSuccess(course);
 			toast.success("Course updated");
 		} catch (_errors) {
 			handleModalClose();
@@ -59,7 +54,7 @@ const CourseUpdate = ({
 
 		if (!formIsValid()) return;
 
-		handleUpdate(updateId);
+		handleUpdate(id);
 	};
 
 	const formIsValid = () => {
@@ -82,7 +77,7 @@ const CourseUpdate = ({
 	return (
 		<>
 			<Modal
-				show={updateModalShow}
+				show={modalShow}
 				onHide={handleModalClose}
 				backdrop="static"
 				keyboard={false}

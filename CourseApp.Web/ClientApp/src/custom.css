@@ -29,3 +29,13 @@ code {
 .delete-btn {
 	margin-left: 5px;
 }
+
+thead th.ascending::after {
+	content: "▼";
+	display: inline-block;
+}
+
+thead th.descending::after {
+	content: "▲";
+	display: inline-block;
+}

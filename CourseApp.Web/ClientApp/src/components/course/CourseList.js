@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import CourseSearch from "./CourseSearch";
 import DeleteCourse from "./CourseDelete";
@@ -10,25 +10,54 @@ const CourseList = () => {
 	const [deleteModalShow, setDeleteModelShow] = useState(false);
 	const [updateId, setUpdateId] = useState(null);
 	const [deleteId, setDeleteId] = useState(null);
+	const [sortConfig, setSortConfig] = useState({
+		key: "name",
+		direction: "ascending",
+	});
+
+	const sortCourses = () => {
+		let sortedCourses = [...courses];
+		sortedCourses.sort((a, b) => {
+			if (a[sortConfig.key] < b[sortConfig.key]) {
+				return sortConfig.direction === "ascending" ? -1 : 1;
+			} else if (a[sortConfig.key] > b[sortConfig.key]) {
+				return sortConfig.direction === "ascending" ? 1 : -1;
+			} else {
+				return 0;
+			}
+		});
+		setCourses(sortedCourses);
+	};
+
+	const handleSort = (key) => {
+		let direction = "ascending";
+		if (sortConfig.key === key && sortConfig.direction === "ascending") {
+			direction = "descending";
+		}
+		setSortConfig({ key, direction });
+	};
+
+	useMemo(() => {
+		if (!updateId && !deleteId) sortCourses();
+	}, [updateId, deleteId, sortConfig]);
+
+	const getClassNamesFor = (name) =>
+		sortConfig.key === name ? sortConfig.direction : undefined;
 
 	const handleGet = (_courses) => {
 		setCourses(_courses);
 	};
 
-	const handleUpdate = (event) => {
-		setUpdateId(event.target.value);
+	const handleModalUpdateShow = (id) => {
+		setUpdateId(id);
 		setUpdateModelShow(true);
 	};
 
 	const handleUpdateSuccess = (_course) => {
 		setCourses(
-			courses.map((c) => {
-				if (c.id !== parseInt(_course.id)) return c;
-				else return _course;
-			})
+			courses.map((c) => (c.id !== parseInt(updateId) ? c : _course))
 		);
-		setUpdateId(null);
-		setUpdateModelShow(false);
+		handleUpdateModalClose();
 	};
 
 	const handleUpdateModalClose = () => {
@@ -36,15 +65,14 @@ const CourseList = () => {
 		setUpdateModelShow(false);
 	};
 
-	const handleDelete = (event) => {
-		setDeleteId(event.target.value);
+	const handleDeleteModalShow = (id) => {
+		setDeleteId(id);
 		setDeleteModelShow(true);
 	};
 
 	const handleDeleteSuccess = () => {
 		setCourses(courses.filter((c) => c.id !== parseInt(deleteId)));
-		setDeleteId(null);
-		setDeleteModelShow(false);
+		handleDeleteModalClose();
 	};
 
 	const handleDeleteModalClose = () => {
@@ -63,9 +91,22 @@ const CourseList = () => {
 								<table className="table table-striped">
 									<thead>
 										<tr>
-											<th>Title</th>
-											<th>Skill Level</th>
-											<th>
+											<th
+												onClick={() => handleSort("name")}
+												className={getClassNamesFor("name")}
+											>
+												Title
+											</th>
+											<th
+												onClick={() => handleSort("level")}
+												className={getClassNamesFor("level")}
+											>
+												Skill Level
+											</th>
+											<th
+												onClick={() => handleSort("rating")}
+												className={getClassNamesFor("rating")}
+											>
 												Rating
 											</th>
 											<th>Path</th>
@@ -87,15 +128,17 @@ const CourseList = () => {
 													<td>
 														<button
 															className="btn btn-secondary"
-															onClick={handleUpdate}
-															value={c.id}
+															onClick={() =>
+																handleModalUpdateShow(c.id)
+															}
 														>
 															Update
 														</button>
 														<button
 															className="btn btn-warning delete-btn"
-															onClick={handleDelete}
-															value={c.id}
+															onClick={() =>
+																handleDeleteModalShow(c.id)
+															}
 														>
 															Delete
 														</button>
@@ -111,16 +154,16 @@ const CourseList = () => {
 				</div>
 			</div>
 			<DeleteCourse
-				deleteModalShow={deleteModalShow}
-				deleteId={deleteId}
-				onDeleteSuccess={handleDeleteSuccess}
-				onDeleteModalClose={handleDeleteModalClose}
+				modalShow={deleteModalShow}
+				id={deleteId}
+				onSuccess={handleDeleteSuccess}
+				onModalClose={handleDeleteModalClose}
 			/>
 			<UpdateCourse
-				updateModalShow={updateModalShow}
-				updateId={updateId}
-				onUpdateSuccess={handleUpdateSuccess}
-				onUpdateModalClose={handleUpdateModalClose}
+				modalShow={updateModalShow}
+				id={updateId}
+				onSuccess={handleUpdateSuccess}
+				onModalClose={handleUpdateModalClose}
 			/>
 		</>
 	);

@@ -4,17 +4,12 @@ import { Modal, Button } from "react-bootstrap";
 import * as courseApi from "../../api/CoursesApi";
 import { toast } from "react-toastify";
 
-const DeleteCourse = ({
-	deleteModalShow,
-	deleteId,
-	onDeleteSuccess,
-	onDeleteModalClose,
-}) => {
-	const handleModalClose = () => onDeleteModalClose();
+const DeleteCourse = ({ modalShow, id, onSuccess, onModalClose }) => {
+	const handleModalClose = () => onModalClose();
 	const handleDelete = async () => {
 		try {
-			await courseApi.courseDelete(deleteId);
-			onDeleteSuccess();
+			await courseApi.courseDelete(id);
+			onSuccess();
 			toast.success("Course deleted");
 		} catch (error) {
 			handleModalClose();
@@ -26,7 +21,7 @@ const DeleteCourse = ({
 	return (
 		<>
 			<Modal
-				show={deleteModalShow}
+				show={modalShow}
 				onHide={handleModalClose}
 				backdrop="static"
 				keyboard={false}

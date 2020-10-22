@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import * as courseApi from "../../api/CoursesApi";
+import * as courseService from "../../services/CourseService";
 import moment from "moment";
 import { toast } from "react-toastify";
 
@@ -14,7 +14,7 @@ const CourseDetails = (props) => {
 
 	const onSearchCourse = async (id) => {
 		try {
-			const _courses = await courseApi.getCourse(id);
+			const _courses = await courseService.getCourse(id);
 			setCourse(_courses);
 		} catch (error) {
 			console.error(error);

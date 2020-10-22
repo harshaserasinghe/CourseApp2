@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
-import * as courseApi from "../../api/CoursesApi";
+import * as courseService from "../../services/CourseService";
 import { toast } from "react-toastify";
 
 const CourseUpdate = ({ modalShow, id, onSuccess, onModalClose }) => {
@@ -29,7 +29,7 @@ const CourseUpdate = ({ modalShow, id, onSuccess, onModalClose }) => {
 
 	const handleSearch = async (id) => {
 		try {
-			const _courses = await courseApi.getCourse(id);
+			const _courses = await courseService.getCourse(id);
 			setCourse(_courses);
 		} catch (error) {
 			console.error(error);
@@ -39,7 +39,7 @@ const CourseUpdate = ({ modalShow, id, onSuccess, onModalClose }) => {
 
 	const handleUpdate = async (id) => {
 		try {
-			await courseApi.courseUpdate(id, course);
+			await courseService.courseUpdate(id, course);
 			onSuccess(course);
 			toast.success("Course updated");
 		} catch (_errors) {

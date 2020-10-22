@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import * as courseApi from "../../api/CoursesApi";
+import * as courseService from "../../services/CourseService";
 import { toast } from "react-toastify";
 
 const CourseCreate = (props) => {
@@ -23,7 +23,7 @@ const CourseCreate = (props) => {
 
 	const handleCreate = async () => {
 		try {
-			await courseApi.createCourse(course);
+			await courseService.createCourse(course);
 			props.history.push("/");
 			toast.success("Course saved");
 		} catch (_errors) {
@@ -31,6 +31,7 @@ const CourseCreate = (props) => {
 			toast.error("Course saved failed");
 		}
 	};
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
 

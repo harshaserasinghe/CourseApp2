@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
 import {
 	Collapse,
 	Container,
@@ -9,63 +9,95 @@ import {
 	NavLink,
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import * as authService from "../../../services/AuthService";
+import * as context from "../context/Context";
+import { toast } from "react-toastify";
 import "./NavMenu.css";
 
-export class NavMenu extends Component {
-	static displayName = NavMenu.name;
+const NavMenu = () => {
+	const [collapsed, setCollapsed] = useState(true);
 
-	constructor(props) {
-		super(props);
+	const [isAuthenticated, setIsAuthenticated] = useContext(
+		context.AuthContext
+	);
 
-		this.toggleNavbar = this.toggleNavbar.bind(this);
-		this.state = {
-			collapsed: true,
-		};
-	}
+	const toggleNavbar = () => {
+		setCollapsed(!collapsed);
+	};
 
-	toggleNavbar() {
-		this.setState({
-			collapsed: !this.state.collapsed,
-		});
-	}
+	const handleLogout = async () => {
+		try {
+			await authService.logout();
+			setIsAuthenticated(authService.isAuthenticated());
+			toast.success("Sign out success");
+		} catch (_errors) {
+			console.error(_errors);
+			toast.error("Error occurred");
+		}
+	};
 
-	render() {
-		return (
-			<header>
-				<Navbar
-					className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
-					light
-				>
-					<Container>
-						<NavbarBrand tag={Link} to="/">
-							Course App
-						</NavbarBrand>
-						<NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-						<Collapse
-							className="d-sm-inline-flex flex-sm-row-reverse"
-							isOpen={!this.state.collapsed}
-							navbar
-						>
-							<ul className="navbar-nav flex-grow">
-								<NavItem>
-									<NavLink tag={Link} className="text-dark" to="/">
-										Courses
-									</NavLink>
-								</NavItem>
+	return (
+		<header>
+			<Navbar
+				className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
+				light
+			>
+				<Container>
+					<NavbarBrand tag={Link} to="/">
+						Course App
+					</NavbarBrand>
+					<NavbarToggler onClick={toggleNavbar} className="mr-2" />
+					<Collapse
+						className="d-sm-inline-flex flex-sm-row-reverse"
+						isOpen={!collapsed}
+						navbar
+					>
+						<ul className="navbar-nav flex-grow">
+							<NavItem>
+								<NavLink tag={Link} className="text-dark" to="/">
+									Courses
+								</NavLink>
+							</NavItem>
+
+							{!isAuthenticated ? (
 								<NavItem>
 									<NavLink
 										tag={Link}
 										className="text-dark"
-										to="/course-create"
+										to="/login"
 									>
-										Add Course
+										Login
 									</NavLink>
 								</NavItem>
-							</ul>
-						</Collapse>
-					</Container>
-				</Navbar>
-			</header>
-		);
-	}
-}
+							) : (
+								<>
+									<NavItem>
+										<NavLink
+											tag={Link}
+											className="text-dark"
+											to="/course-create"
+										>
+											Add Course
+										</NavLink>
+									</NavItem>
+									<NavItem>
+										<NavLink
+											tag={Link}
+											className="text-dark"
+											to="/"
+											onClick={handleLogout}
+										>
+											Logout
+										</NavLink>
+									</NavItem>
+								</>
+							)}
+						</ul>
+					</Collapse>
+				</Container>
+			</Navbar>
+		</header>
+	);
+};
+
+export default NavMenu;

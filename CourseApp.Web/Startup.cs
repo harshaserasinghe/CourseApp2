@@ -31,15 +31,15 @@ namespace CourseApp.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("EnableCORS", builder =>
-            //    {
-            //        builder.AllowAnyOrigin()
-            //           .AllowAnyHeader()
-            //           .AllowAnyMethod();
-            //    });
-            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy("EnableCORS", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+                });
+            });
 
             services.AddAutoMapper(Assembly.Load("CourseApp.Core"));
 
@@ -58,24 +58,28 @@ namespace CourseApp.Web
                 opt.UseSqlServer(Configuration.GetConnectionString("CourseDb"));
             });
 
-            //services.AddIdentity<User, IdentityRole>(opt =>
-            //{
-            //    opt.Password.RequiredLength = 8;
-            //}).AddEntityFrameworkStores<CourseDbContext>();
+            services.AddIdentity<User, IdentityRole>(opt =>
+            {
+                opt.Password.RequiredLength = 8;
+            }).AddEntityFrameworkStores<CourseDbContext>();
 
-            //services.AddAuthentication(opt =>
-            //{
-            //    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer(opt2 =>
-            //{
-            //    opt2.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateLifetime = true,
-            //        ValidateIssuerSigningKey = true,
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("secretKey")))
-            //    };
-            //});
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt2 =>
+            {
+                opt2.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "https://localhost:5001",
+                    ValidAudience = "https://localhost:5001",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("secretKey")))
+                };
+            });
 
             services.AddScoped<ICourseRepository, CourseRepository>();
         }
@@ -92,7 +96,7 @@ namespace CourseApp.Web
                 app.UseHsts();
             }
 
-            //app.UseCors("EnableCORS");
+            app.UseCors("EnableCORS");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();

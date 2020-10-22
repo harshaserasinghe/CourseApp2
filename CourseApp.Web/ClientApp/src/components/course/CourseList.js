@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext } from "react";
 import { Link } from "react-router-dom";
 import CourseSearch from "./CourseSearch";
 import DeleteCourse from "./CourseDelete";
 import UpdateCourse from "./CourseUpdate";
+import * as context from "../common/context/Context";
 
 const CourseList = () => {
 	const [courses, setCourses] = useState([]);
@@ -14,6 +15,9 @@ const CourseList = () => {
 		key: "name",
 		direction: "ascending",
 	});
+	const [isAuthenticated, setIsAuthenticated] = useContext(
+		context.AuthContext
+	);
 
 	const sortCourses = () => {
 		let sortedCourses = [...courses];
@@ -125,24 +129,26 @@ const CourseList = () => {
 													<td>{c.level}</td>
 													<td>{`${c.rating}/5`}</td>
 													<td>{c.category}</td>
-													<td>
-														<button
-															className="btn btn-secondary"
-															onClick={() =>
-																handleModalUpdateShow(c.id)
-															}
-														>
-															Update
-														</button>
-														<button
-															className="btn btn-warning delete-btn"
-															onClick={() =>
-																handleDeleteModalShow(c.id)
-															}
-														>
-															Delete
-														</button>
-													</td>
+													{isAuthenticated && (
+														<td>
+															<button
+																className="btn btn-secondary"
+																onClick={() =>
+																	handleModalUpdateShow(c.id)
+																}
+															>
+																Update
+															</button>
+															<button
+																className="btn btn-warning delete-btn"
+																onClick={() =>
+																	handleDeleteModalShow(c.id)
+																}
+															>
+																Delete
+															</button>
+														</td>
+													)}
 												</tr>
 											);
 										})}

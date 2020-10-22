@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Modal, Button } from "react-bootstrap";
-import * as courseApi from "../../api/CoursesApi";
+import * as courseService from "../../services/CourseService";
 import { toast } from "react-toastify";
 
 const DeleteCourse = ({ modalShow, id, onSuccess, onModalClose }) => {
 	const handleModalClose = () => onModalClose();
 	const handleDelete = async () => {
 		try {
-			await courseApi.courseDelete(id);
+			await courseService.courseDelete(id);
 			onSuccess();
 			toast.success("Course deleted");
 		} catch (error) {

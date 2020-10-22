@@ -39,3 +39,11 @@ thead th.descending::after {
 	content: "▲";
 	display: inline-block;
 }
+
+.btn-cancel {
+	margin-left: 5px;
+}
+
+.btn-signup {
+	float: right;
+}

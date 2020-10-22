@@ -1,6 +1,16 @@
 const axios = require("axios").default;
 const baseUrl = "api/courses";
 
+axios.interceptors.request.use(
+	(config) => {
+		config.headers.authorization = `Bearer ${localStorage.getItem("jwt")}`;
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	}
+);
+
 export const getCourses = async (filter = "") => {
 	try {
 		const url = `${baseUrl}/?filter=${filter}`;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import * as courseApi from "../../api/CoursesApi";
+import * as courseService from "../../services/CourseService";
 import { toast } from "react-toastify";
 
 const CourseSearch = ({ onGet }) => {
@@ -14,7 +14,7 @@ const CourseSearch = ({ onGet }) => {
 
 	const handleGet = async () => {
 		try {
-			const courses = await courseApi.getCourses(searchTerm);
+			const courses = await courseService.getCourses(searchTerm);
 			onGet(courses);
 		} catch (error) {
 			console.error(error);

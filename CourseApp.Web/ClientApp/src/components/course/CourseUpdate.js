@@ -29,8 +29,8 @@ const CourseUpdate = ({ modalShow, id, onSuccess, onModalClose }) => {
 
 	const handleSearch = async (id) => {
 		try {
-			const _courses = await courseService.getCourse(id);
-			setCourse(_courses);
+			const _course = await courseService.getCourse(id);
+			setCourse(_course);
 		} catch (error) {
 			console.error(error);
 			toast.error("Course get failed");

@@ -46,6 +46,7 @@ namespace CourseApp.Web.Api
             return Ok(courseDTOs);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Post(CourseCreateDTO courseCreateDTO)
         {
@@ -56,6 +57,7 @@ namespace CourseApp.Web.Api
             return CreatedAtAction(nameof(Get), new { id = newCourse.Id }, newCourse);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public IActionResult Put(int id, CourseUpdateDTO courseUpdateDTO)
         {
@@ -78,6 +80,7 @@ namespace CourseApp.Web.Api
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
